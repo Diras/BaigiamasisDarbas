@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaigiamasisDarbas", "BaigiamasisDarbas\BaigiamasisDarbas.csproj", "{8CE22E85-ABF9-41EF-A80D-142CCB708051}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeetingAppTests", "MeetingAppTests\MeetingAppTests.csproj", "{61868DA7-8BC4-43CC-BA3E-B0CCCF17755C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{8CE22E85-ABF9-41EF-A80D-142CCB708051}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CE22E85-ABF9-41EF-A80D-142CCB708051}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CE22E85-ABF9-41EF-A80D-142CCB708051}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61868DA7-8BC4-43CC-BA3E-B0CCCF17755C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61868DA7-8BC4-43CC-BA3E-B0CCCF17755C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61868DA7-8BC4-43CC-BA3E-B0CCCF17755C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61868DA7-8BC4-43CC-BA3E-B0CCCF17755C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
