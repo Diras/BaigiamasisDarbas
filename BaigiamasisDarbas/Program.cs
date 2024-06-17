@@ -3,6 +3,7 @@ using BaigiamasisDarbas.Services;
 using BaigiamasisDarbas.Contracts;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
+using Serilog;
 using System;
 
 namespace BaigiamasisDarbas
@@ -11,7 +12,13 @@ namespace BaigiamasisDarbas
     {
         public static void Main(string[] args)
         {
-            
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information() // Keičiame minimalų žinučių lygį į Information
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.File("Logs/logs.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
             string mongoConnectionString = "mongodb+srv://Diras:rgd7840Z@learning.0insxlx.mongodb.net/?retryWrites=true&w=majority&appName=Learning";
 
             // MongoDB Client setu

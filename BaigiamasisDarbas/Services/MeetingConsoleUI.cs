@@ -215,6 +215,7 @@ namespace BaigiamasisDarbas.Services
         private async Task DeleteWorker()
         {
             ListWorkers().Wait();
+            List<Admin> admins = (await _workerService.GetAdminsInfoAsync()).ToList();
             Console.Write("Enter worker Id to delete: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
@@ -224,7 +225,15 @@ namespace BaigiamasisDarbas.Services
                 {
                     if (worker.Id == id)
                     {
+                       
+                        if (admins.Any(admin => admin.Id == worker.Id+1))
+                        {
+                            Console.WriteLine("Cannot delete worker, person responsible of meeting!");
+                            return;
+                        }
+
                         workerFound = true;
+                        break; 
                     }
                 }
                 if (workerFound == false)

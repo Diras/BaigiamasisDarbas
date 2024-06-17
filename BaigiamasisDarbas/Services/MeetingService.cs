@@ -1,11 +1,7 @@
 ﻿using BaigiamasisDarbas.Contracts;
 using BaigiamasisDarbas.Models;
-using BaigiamasisDarbas.Repositories;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Serilog;
 
 namespace BaigiamasisDarbas.Services
 {
@@ -22,65 +18,121 @@ namespace BaigiamasisDarbas.Services
 
         public async Task AddMeetingAsync(Meeting meeting)
         {
-            await _repository.AddMeetingAsync(meeting);
-            await _cacheRepository.AddMeetingAsync(meeting);
+            try
+            {
+                await _repository.AddMeetingAsync(meeting);
+                await _cacheRepository.AddMeetingAsync(meeting);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error occurred while adding meeting");
+                throw;
+            }
         }
 
         public async Task AddParticipantsAsync(MeetingParticipant participant)
         {
-            await _repository.AddParticipantsAsync(participant);
-            await _cacheRepository.AddParticipantsAsync(participant);
+            try
+            {
+                await _repository.AddParticipantsAsync(participant);
+                await _cacheRepository.AddParticipantsAsync(participant);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error occurred while adding participant");
+                throw;
+            }
         }
 
         public async Task DeleteMeetingAsync(int id)
         {
-            await _repository.DeleteMeetingAsync(id);
-            await _cacheRepository.DeleteMeetingAsync(id);
+            try
+            {
+                await _repository.DeleteMeetingAsync(id);
+                await _cacheRepository.DeleteMeetingAsync(id);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error occurred while deleting meeting with ID: {Id}", id);
+                throw;
+            }
         }
 
         public async Task<IEnumerable<Meeting>> GetAllMeetingsAsync()
         {
-            var meetings = await _cacheRepository.GetAllMeetingsAsync();
-            if (!meetings.Any())
+            try
             {
-                meetings = await _repository.GetAllMeetingsAsync();
-                foreach (var meeting in meetings)
+                var meetings = await _cacheRepository.GetAllMeetingsAsync();
+                if (!meetings.Any())
                 {
-                    await _cacheRepository.AddMeetingAsync(meeting);
+                    meetings = await _repository.GetAllMeetingsAsync();
+                    foreach (var meeting in meetings)
+                    {
+                        await _cacheRepository.AddMeetingAsync(meeting);
+                    }
                 }
+                return meetings;
             }
-            return meetings;
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error occurred while getting all meetings");
+                throw;
+            }
         }
 
         public async Task<Meeting> GetMeetingByIdAsync(int id)
         {
-            var meeting = await _cacheRepository.GetMeetingByIdAsync(id);
-            if (meeting == null)
+            try
             {
-                meeting = await _repository.GetMeetingByIdAsync(id);
-                if (meeting != null)
+                var meeting = await _cacheRepository.GetMeetingByIdAsync(id);
+                if (meeting == null)
                 {
-                    await _cacheRepository.AddMeetingAsync(meeting);
+                    meeting = await _repository.GetMeetingByIdAsync(id);
+                    if (meeting != null)
+                    {
+                        await _cacheRepository.AddMeetingAsync(meeting);
+                    }
                 }
+                return meeting;
             }
-            return meeting;
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error occurred while getting meeting by ID: {Id}", id);
+                throw;
+            }
         }
 
         public async Task RemoveParticipantAsync(int meetingId, int participantId)
         {
-            await _repository.RemoveParticipantAsync(meetingId, participantId);
-            var meeting = await _cacheRepository.GetMeetingByIdAsync(meetingId);
-            if (meeting != null)
+            try
             {
-                meeting.Participants.RemoveAll(p => p.ParticipantId == participantId);
-                await _cacheRepository.UpdateMeetingAsync(meeting, meetingId);
+                await _repository.RemoveParticipantAsync(meetingId, participantId);
+                var meeting = await _cacheRepository.GetMeetingByIdAsync(meetingId);
+                if (meeting != null)
+                {
+                    meeting.Participants.RemoveAll(p => p.ParticipantId == participantId);
+                    await _cacheRepository.UpdateMeetingAsync(meeting, meetingId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error occurred while removing participant with ID: {ParticipantId} from meeting with ID: {MeetingId}", participantId, meetingId);
+                throw;
             }
         }
 
         public async Task UpdateMeetingAsync(Meeting meeting, int id)
         {
-            await _repository.UpdateMeetingAsync(meeting, id);
-            await _cacheRepository.UpdateMeetingAsync(meeting, id);
+            try
+            {
+                await _repository.UpdateMeetingAsync(meeting, id);
+                await _cacheRepository.UpdateMeetingAsync(meeting, id);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error occurred while updating meeting with ID: {Id}", id);
+                throw;
+            }
         }
     }
 }
